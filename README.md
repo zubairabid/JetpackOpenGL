@@ -1,7 +1,5 @@
-Graphics Boilerplate Code
-=========================
-
-This is boilerplate code for the assignments which might be helpful.
+# Graphics Assignment 1
+A jetpack joyride inspired game using OpenGL 3
 
 
 License

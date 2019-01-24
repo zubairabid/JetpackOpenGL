@@ -1,6 +1,8 @@
 #include "main.h"
 #include "timer.h"
 #include "ball.h"
+#include "player.h"
+#include "brick.h"
 
 using namespace std;
 
@@ -12,9 +14,11 @@ GLFWwindow *window;
 * Customizable functions *
 **************************/
 
-Ball ball1, ball2;
+// Ball ball1, ball2;
+Player player1;
+Brick bfloor[10];
 
-float screen_zoom = 1, screen_center_x = 0, screen_center_y = 0;
+float screen_zoom = 0.3, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 
 Timer t60(1.0 / 60);
@@ -30,7 +34,7 @@ void draw() {
     glUseProgram (programID);
 
     // Eye - Location of camera. Don't change unless you are sure!!
-    glm::vec3 eye (0, 0, 50);
+    glm::vec3 eye (0, 0, 100);
     // glm::vec3 eye ( 5*cos(camera_rotation_angle*M_PI/180.0f), 0, 5*sin(camera_rotation_angle*M_PI/180.0f) );
     // Target - Where is the camera looking at.  Don't change unless you are sure!!
     glm::vec3 target (0, 0, 0);
@@ -52,28 +56,63 @@ void draw() {
     glm::mat4 MVP;  // MVP = Projection * View * Model
 
     // Scene render
-    ball1.draw(VP);
-    ball2.draw(VP);
+    for (int i = 0; i < 10; i++) {
+        bfloor[i].draw(VP);
+    }
+    player1.draw(VP);
 }
 
 void tick_input(GLFWwindow *window) {
     int left  = glfwGetKey(window, GLFW_KEY_LEFT);
     int right = glfwGetKey(window, GLFW_KEY_RIGHT);
+    int up = glfwGetKey(window, GLFW_KEY_UP);
     glfwSetScrollCallback(window, scroll_callback);
     
     if (left) {
-        ball1.set_speed(0.2);
+        player1.set_speed_x(0.15);
     }
     else if (right) {
-        ball1.set_speed(-0.2);
+        player1.set_speed_x(-0.15);
+    }
+    if (up) {
+        player1.set_speed_y(0.15);
     }
 
     reset_screen();
 }
 
 void tick_elements() {
-    ball1.tick();
-    ball2.tick();
+    for (int i = 0; i < 10; i++) {
+        if ( detect_collision(player1.bounds, bfloor[i].bounds) ) {
+            if (player1.speed_y < 0) {
+                player1.set_position(player1.bounds.x, bfloor[i].bounds.y + 2);
+                player1.set_speed_y(0); 
+            }
+            // player1.set_position(player1.bounds.x, player1.bounds.y + player1.speed_y);
+        }
+    }
+    
+    if (player1.bounds.x >= 10 && player1.speed_x < 0) {
+        cout << "Player position: " << player1.bounds.x << endl;
+        
+        for (int i = 0; i < 10; i++) {
+            bfloor[i].set_speed_x(player1.speed_x);
+            bfloor[i].tick();
+        }
+        player1.set_speed_x(0);
+    }
+
+    if (player1.bounds.x <= -10 && player1.speed_x > 0) {
+        cout << "Player position: " << player1.bounds.x << endl;
+        
+        for (int i = 0; i < 10; i++) {
+            bfloor[i].set_speed_x(player1.speed_x);
+            bfloor[i].tick();
+        }
+        player1.set_speed_x(0);
+    }
+
+    player1.tick();
 }
 
 /* Initialize the OpenGL rendering properties */
@@ -82,12 +121,14 @@ void initGL(GLFWwindow *window, int width, int height) {
     /* Objects should be created before any other gl function and shaders */
     // Create the models
 
-    ball1       = Ball(1.5, 1, COLOR_RED);
-    ball1.set_speed(0);
+    player1     = Player(0, 0, COLOR_BLACK);
+    player1.set_speed(0, 0);
 
-    ball2       = Ball(-1, 1, COLOR_GREEN);
-    ball2.set_speed(0);
-
+    for (int i = 0; i < 10; i++) {
+        bfloor[i] = Brick(2*(i-2), -10, COLOR_GREEN);
+        bfloor[i].set_speed(0, 0);
+    }
+    
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -143,8 +184,8 @@ int main(int argc, char **argv) {
 }
 
 bool detect_collision(bounding_box_t a, bounding_box_t b) {
-    return (abs(a.x - b.x) * 2 < (a.width + b.width)) &&
-           (abs(a.y - b.y) * 2 < (a.height + b.height));
+    return (abs(a.x - b.x) * 2 <= (a.width + b.width)) &&
+           (abs(a.y - b.y) * 2 <= (a.height + b.height));
 }
 
 void reset_screen() {
@@ -152,5 +193,5 @@ void reset_screen() {
     float bottom = screen_center_y - 4 / screen_zoom;
     float left   = screen_center_x - 4 / screen_zoom;
     float right  = screen_center_x + 4 / screen_zoom;
-    Matrices.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
+    Matrices.projection = glm::ortho(left, right, bottom, top, 1.0f, 500.0f);
 }
