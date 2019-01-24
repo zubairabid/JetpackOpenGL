@@ -1,17 +1,20 @@
 #include "main.h"
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PARALLAX_H
+#define PARALLAX_H
 
-class Player {
+class Parallax {
 public:
-    Player() {}
-    Player(float x, float y, color_t color);
+    Parallax() {}
+    Parallax(float x, float y, color_t color, int count, int cycles);
     glm::vec3 position;
     void draw(glm::mat4 VP);
     void tick();
     double speed_x;
     double speed_y;
+    int counter;
+    int store;
+    int cycles;
     void set_speed(double speed_x, double speed_y);
     void set_speed_x(double speed_x);
     void set_speed_y(double speed_y);
