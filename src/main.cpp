@@ -40,16 +40,16 @@ Player player1;
 Brick actualfloor[15];
 Brick actualceil[15];
 
-Coin1 coins1[500];
-Coin2 coins2[500];
-Coin3 coins3[500];
+Coin1 coins1[15];
+Coin2 coins2[15];
+Coin3 coins3[15];
 
 int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0;
 
 Parallax beam[2][30];
-Firelines line[500][30];
-Special1 sp1[100];
-Special2 sp2[100];
+Firelines line[15][30];
+Special1 sp1[15];
+Special2 sp2[15];
 Boomerang boomerang;
 
 float screen_zoom = 0.3, screen_center_x = 0, screen_center_y = 0;
@@ -128,6 +128,7 @@ void draw() {
             line[i][j].draw(VP);
         }
     }
+    // boomerang.draw(VP);
 
     // 5
     player1.draw(VP);
@@ -246,58 +247,22 @@ void tick_elements() {
         }
     }
 
-
-    // PANNING
-    // If in pan range
-    if ((player1.bounds.x >= 5 && player1.speed_x < 0) || (player1.bounds.x <= -10 && player1.speed_x > 0)) {
-        cout << "Player position: " << player1.bounds.x << endl;
-        
-        // PAN ENVIRONMENT
-        
-        // Fireline
-        for (int i = 0; i < flt; i++) {
-            for (int j = 0; j < 30; j++) {
-                line[i][j].set_speed_x(player1.speed_x);
-                line[i][j].tick();
-            }
+    // MOVE IN GENERAL
+    createMap();
+    for (int i = 0; i < flt; i++) {
+        for (int j = 0; j < 30; j++) {
+            line[i][j].tick();
         }
-
-        // Coins
-        for (int i = 0; i < c1t; i++) {
-            coins1[i].set_speed_x(player1.speed_x);
-            coins1[i].tick();
-        }
-        for (int i = 0; i < c2t; i++) {
-            coins2[i].set_speed_x(player1.speed_x);
-            coins2[i].tick();
-        }
-        for (int i = 0; i < c3t; i++) {
-            coins3[i].set_speed_x(player1.speed_x);
-            coins3[i].tick();
-        }
-
-        // Special
-        for (int i = 0; i < s1t; i++) {
-            sp1[i].set_speed_x(-player1.speed_x);
-            sp1[i].tick();
-        }
-        for (int i = 0; i < s2t; i++) {
-            sp2[i].set_speed_x(-player1.speed_x);
-            sp2[i].tick();
-        }
-        
-
-        // b1.set_speed_x(-player1.speed_x/2);
-        // b1.tick();
-
-        // DO NOT MOVE PLAYER
-        player1.set_speed_x(0);
     }
-
-    // // Redraw Fireline 1
-    // for (int i = 0; i < 30; i++) {
-    //     par[i].tick();
-    // }
+    for (int i = 0; i < c1t; i++) {
+        coins1[i].tick();
+    }
+    for (int i = 0; i < c2t; i++) {
+        coins2[i].tick();
+    }
+    for (int i = 0; i < c3t; i++) {
+        coins3[i].tick();
+    }
     // Special
     for (int i = 0; i < s1t; i++) {
         sp1[i].tick();
@@ -305,6 +270,54 @@ void tick_elements() {
     for (int i = 0; i < s2t; i++) {
         sp2[i].tick();
     }
+    // boomerang.tick();
+
+    // PANNING
+    // If in pan range
+    if ((player1.bounds.x >= 5 && player1.speed_x < 0) || (player1.bounds.x <= -10 && player1.speed_x > 0)) {
+        // cout << "Player position: " << player1.bounds.x << endl;
+        
+        
+        // PAN ENVIRONMENT
+        
+        // Fireline
+        for (int i = 0; i < flt; i++) {
+            for (int j = 0; j < 30; j++) {
+                line[i][j].set_speed_x(line[i][j].speed_x + player1.speed_x);
+                line[i][j].tick();
+            }
+        }
+
+        // Coins
+        for (int i = 0; i < c1t; i++) {
+            coins1[i].set_speed_x(coins1[i].speed_x + player1.speed_x);
+            coins1[i].tick();
+        }
+        for (int i = 0; i < c2t; i++) {
+            coins2[i].set_speed_x(coins2[i].speed_x + player1.speed_x);
+            coins2[i].tick();
+        }
+        for (int i = 0; i < c3t; i++) {
+            coins3[i].set_speed_x(coins3[i].speed_x + player1.speed_x);
+            coins3[i].tick();
+        }
+
+        // Special
+        for (int i = 0; i < s1t; i++) {
+            // sp1[i].set_speed_x(sp1[i].speed_x + player1.speed_x);
+            sp1[i].tick();
+            sp1[i].position.x += player1.speed_x;
+        }
+        for (int i = 0; i < s2t; i++) {
+            // sp2[i].set_speed_x(sp2[i].speed_x +  player1.speed_x);
+            sp2[i].tick();
+            sp2[i].position.x += player1.speed_x;
+        }
+        
+        // DO NOT MOVE PLAYER
+        player1.set_speed_x(0);
+    }
+
     player1.tick();
 }
 
@@ -337,70 +350,10 @@ void initGL(GLFWwindow *window, int width, int height) {
     cout << "Made floor, ceiling" << endl;
 
 
-    for (int i = 5; i < 1000; i++) {
-        int value = rand() % 1000;
-
-        // Generating coins on the map:
-        if (value > 500 && value <= 600 && c1t < 500) {
-            coins1[c1t] = Coin1(i, rand()%12, COLOR_ORED);
-            coins1[c1t].set_speed(0, 0);
-            c1t+=1;
-            cout << "Coin1 added" << c1t << endl;
-        }
-        if (value > 600 && value <= 700 && c2t < 500) {
-            coins2[c2t] = Coin2(i, rand()%12, COLOR_BRED);
-            coins2[c2t].set_speed(0, 0);
-            c2t+=1;
-            cout << "Coin2 added" << c2t << endl;
-        }
-        if (value > 700 && value <= 800 && c3t < 500) {
-            coins3[c3t] = Coin3(i, rand()%12, COLOR_BURED);
-            coins3[c3t].set_speed(0, 0);
-            c3t+=1;
-            cout << "Coin3 added" << c3t << endl;
-        }
-
-
-        // Generating firelines on map:
-        if(value > 38 && value <= 138 && flt < 500) {
-            int begin = rand() % 12;
-            for (int j = 0; j < 30; j++) {
-                // if (rand() - RAND_MAX/2 > 0) {
-                    line[flt][j] = Firelines(i+0.2*j, begin-12+0.2*j, COLOR_RED);
-                // }
-                // else {
-                //     line[flt][j] = Firelines(i+0.2*j, 10-0.2*j, COLOR_RED, -1, -1);
-                // }               
-            }
-            flt+=1; 
-
-            cout << "Fireline added" << flt << endl;
-        }
-
-        // Generating special powerups
-        if (value > 298 && value <= 308 && s1t < 100) {
-            sp1[s1t] = Special1(i, 12, COLOR_PRED, 70);
-            sp1[s1t].set_speed(0, 0);
-            s1t+=1;
-            cout << "Powerup 1 added" << s1t << endl;
-        }
-
-        if (value > 757 && value <= 767 && s2t < 100) {
-            sp2[s2t] = Special2(i, 12, COLOR_LPRED, 70);
-            sp2[s2t].set_speed(0, 0);
-            s2t+=1;
-            cout << "Powerup 2 added" << s2t << endl;
-        }
-
-    }
-
     // for (int i = 0; i < 30; i++) {
     //     par[i] = Parallax(3+0.2*i, 5, COLOR_RED, 100, 5);
     //     par[i].set_speed(0, 0);
     // }
-
-    // b1 = Boomerang(15, 10, COLOR_BLUE, 100);
-    // b1.set_speed(0, 0);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -421,6 +374,67 @@ void initGL(GLFWwindow *window, int width, int height) {
     cout << "RENDERER: " << glGetString(GL_RENDERER) << endl;
     cout << "VERSION: " << glGetString(GL_VERSION) << endl;
     cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
+}
+
+void createMap() {
+    double player_location = player1.position.x;
+    int value = rand() % 20000;
+    int i = (int)player_location + 25;
+    if (value > 500 && value <= 600) {
+        coins1[c1t] = Coin1(i, rand()%12, COLOR_ORED);
+        coins1[c1t].set_speed(0, 0);
+        c1t = (c1t + 1)%15;
+        cout << "Coin1 added" << c1t << endl;
+    }
+    if (value > 600 && value <= 700) {
+        coins2[c2t] = Coin2(i, rand()%12, COLOR_BRED);
+        coins2[c2t].set_speed(0, 0);
+        c2t = (c2t + 1)%15;
+        cout << "Coin2 added" << c2t << endl;
+    }
+    if (value > 700 && value <= 800 && c3t < 50) {
+        coins3[c3t] = Coin3(i, rand()%12, COLOR_BURED);
+        coins3[c3t].set_speed(0, 0);
+        c3t = (c3t + 1)%15;;
+        cout << "Coin3 added" << c3t << endl;
+    }
+
+
+    // Generating firelines on map:
+    if(value > 38 && value <= 138) {
+        int begin = rand() % 12;
+        for (int j = 0; j < 30; j++) {
+            // if (rand() - RAND_MAX/2 > 0) {
+                line[flt][j] = Firelines(i+0.2*j, begin-12+0.2*j, COLOR_RED);
+                line[flt][j].set_speed(0, 0);
+            // }
+            // else {
+            //     line[flt][j] = Firelines(i+0.2*j, 10-0.2*j, COLOR_RED, -1, -1);
+            // }               
+        }
+        flt = (flt + 1)%15; 
+
+        cout << "Fireline added" << flt << endl;
+    }
+    if (value > 469 && value < 1469) {
+        // boomerang = Boomerang(i, 10, COLOR_BLUE, 100);
+        // boomerang.set_speed(0, 0);
+    }
+
+    // Generating special powerups
+    if (value > 298 && value <= 308 && s1t < 10) {
+        sp1[s1t] = Special1(i, 12, COLOR_PRED, 70);
+        sp1[s1t].set_speed(0, 0);
+        s1t = (s1t + 1)%15;
+        cout << "Powerup 1 added" << s1t << endl;
+    }
+
+    if (value > 757 && value <= 767 && s2t < 10) {
+        sp2[s2t] = Special2(i, 12, COLOR_LPRED, 70);
+        sp2[s2t].set_speed(0, 0);
+        s2t = (s2t + 1)%15;
+        cout << "Powerup 2 added" << s2t << endl;
+    }
 }
 
 

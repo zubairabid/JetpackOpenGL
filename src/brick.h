@@ -12,6 +12,7 @@ public:
     void draw(glm::mat4 VP);
     bounding_box_t bounds;
     void tick();
+    double dsp;
     double speed_x;
     double speed_y;
     void set_speed(double speed_x, double speed_y);

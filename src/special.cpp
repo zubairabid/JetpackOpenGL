@@ -4,6 +4,7 @@
 Special1::Special1(float x, float y, color_t color, int count) {
     this->counter = count;
     this->store = count;
+    this->dsp = -0.05;
     this->position = glm::vec3(x, y, 0);
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
@@ -78,6 +79,7 @@ void Special1::set_speed(double speed_x, double speed_y) {
 
 void Special1::tick() {
     // this->rotation += speed;
+    this->position.x += dsp;
     this->position.x -= speed_x;
     this->position.y += speed_y;
     
@@ -106,6 +108,7 @@ Special2::Special2(float x, float y, color_t color, int count) {
     this->counter = count;
     this->store = count;
     this->position = glm::vec3(x, y, 0);
+    this->dsp = -0.05;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     static const GLfloat vertex_buffer_data[] = {
@@ -179,6 +182,7 @@ void Special2::set_speed(double speed_x, double speed_y) {
 
 void Special2::tick() {
     // this->rotation += speed;
+    this->position.x += dsp;
     this->position.x -= speed_x;
     this->position.y += speed_y;
     
