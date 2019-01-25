@@ -1,10 +1,7 @@
-#include "parallax.h"
+#include "firelines.h"
 #include "main.h"
 
-Parallax::Parallax(float x, float y, color_t color, int count, int cycles) {
-    this->counter = count;
-    this->store = count;
-    this->cycles = count*cycles;
+Firelines::Firelines(float x, float y, color_t color) {
     this->position = glm::vec3(x, y, 0);
     this->score = 0;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
@@ -56,7 +53,7 @@ Parallax::Parallax(float x, float y, color_t color, int count, int cycles) {
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
 }
 
-void Parallax::draw(glm::mat4 VP) {
+void Firelines::draw(glm::mat4 VP) {
     Matrices.model = glm::mat4(0.1f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     Matrices.model *= translate;
@@ -65,50 +62,33 @@ void Parallax::draw(glm::mat4 VP) {
     draw3DObject(this->object);
 }
 
-void Parallax::set_speed(double speed_x, double speed_y) {
+void Firelines::set_speed(double speed_x, double speed_y) {
     this->speed_x = speed_x;
     this->speed_y = speed_y;
 }
 
-void Parallax::set_speed_x(double speed_x) {
+void Firelines::set_speed_x(double speed_x) {
     this->speed_x = speed_x;
 }
 
-void Parallax::set_speed_y(double speed_y) {
+void Firelines::set_speed_y(double speed_y) {
     this->speed_y = speed_y;
 }
 
-void Parallax::set_position(float x, float y) {
+void Firelines::set_position(float x, float y) {
     this->position = glm::vec3(x, y, 0);
     this->bounds.x = x;
     this->bounds.y = y;
 }
 
-void Parallax::tick() {
-
-    if(this->cycles <= 0) {
-        this->position.y = 1000;
-    }
-
+void Firelines::tick() {
 
     // this->rotation += speed;
-    this->position.x -= speed_x;
+    this->position.x += speed_x;
     this->position.y += speed_y;
     
     this->speed_x = 0;
-    if (this->counter == store) {
-        this->speed_y = -0.1;
-    }
-    if (this->counter == 0) {
-        this->speed_y = 0.1;
-    }
-    if (this->speed_y > 0) {
-        this->counter++;
-    }
-    else {
-        this->counter--;
-    }
-    cycles--;
+
     this->bounds.x = this->position.x;
     this->bounds.y = this->position.y;
 }

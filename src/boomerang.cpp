@@ -1,7 +1,9 @@
-#include "player.h"
+#include "boomerang.h"
 #include "main.h"
 
-Player::Player(float x, float y, color_t color) {
+Boomerang::Boomerang(float x, float y, color_t color, int count) {
+    this->counter = count;
+    this->store = count;
     this->position = glm::vec3(x, y, 0);
     this->score = 0;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
@@ -53,7 +55,7 @@ Player::Player(float x, float y, color_t color) {
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
 }
 
-void Player::draw(glm::mat4 VP) {
+void Boomerang::draw(glm::mat4 VP) {
     Matrices.model = glm::mat4(1.0f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     Matrices.model *= translate;
@@ -62,34 +64,45 @@ void Player::draw(glm::mat4 VP) {
     draw3DObject(this->object);
 }
 
-void Player::set_speed(double speed_x, double speed_y) {
+void Boomerang::set_speed(double speed_x, double speed_y) {
     this->speed_x = speed_x;
     this->speed_y = speed_y;
 }
 
-void Player::set_speed_x(double speed_x) {
+void Boomerang::set_speed_x(double speed_x) {
     this->speed_x = speed_x;
 }
 
-void Player::set_speed_y(double speed_y) {
+void Boomerang::set_speed_y(double speed_y) {
     this->speed_y = speed_y;
 }
 
-void Player::set_position(float x, float y) {
+void Boomerang::set_position(float x, float y) {
     this->position = glm::vec3(x, y, 0);
     this->bounds.x = x;
     this->bounds.y = y;
 }
 
-void Player::tick() {
+void Boomerang::tick() {
     // this->rotation += speed;
     this->position.x -= speed_x;
     this->position.y += speed_y;
-    
-    if (this->speed_y == 0) {
-        this->speed_x = 0;
+
+    if ( this->counter >= store / 2 ) {
+        this->speed_y -= 0.003;
+        this->speed_x += 0.009;
     }
-    this->speed_y -= 0.01;
+    else {
+        // this->speed_y += 0.01;
+        this->speed_x -= 0.009;
+    }
+
+    if (this->speed_y > 0) {
+        this->counter++;
+    }
+    else {
+        this->counter--;
+    }
     
     this->bounds.x = this->position.x;
     this->bounds.y = this->position.y;

@@ -91,5 +91,10 @@ extern const color_t COLOR_BLACK;
 extern const color_t COLOR_BACKGROUND;
 extern const color_t COLOR_WHITE;
 extern const color_t COLOR_BLUE;
+extern const color_t COLOR_LPRED;
+extern const color_t COLOR_PRED;
+extern const color_t COLOR_ORED;
+extern const color_t COLOR_BRED;
+extern const color_t COLOR_BURED;
 
 #endif

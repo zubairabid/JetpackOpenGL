@@ -8,54 +8,54 @@ Special1::Special1(float x, float y, color_t color, int count) {
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     static const GLfloat vertex_buffer_data[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
+        -0.6f,-0.6f,-0.6f, // triangle 1 : begin
+        -0.6f,-0.6f, 0.6f,
+        -0.6f, 0.6f, 0.6f, // triangle 1 : end
+        0.6f, 0.6f,-0.6f, // triangle 2 : begin
+        -0.6f,-0.6f,-0.6f,
+        -0.6f, 0.6f,-0.6f, // triangle 2 : end
+        0.6f,-0.6f, 0.6f,
+        -0.6f,-0.6f,-0.6f,
+        0.6f,-0.6f,-0.6f,
+        0.6f, 0.6f,-0.6f,
+        0.6f,-0.6f,-0.6f,
+        -0.6f,-0.6f,-0.6f,
+        -0.6f,-0.6f,-0.6f,
+        -0.6f, 0.6f, 0.6f,
+        -0.6f, 0.6f,-0.6f,
+        0.6f,-0.6f, 0.6f,
+        -0.6f,-0.6f, 0.6f,
+        -0.6f,-0.6f,-0.6f,
+        -0.6f, 0.6f, 0.6f,
+        -0.6f,-0.6f, 0.6f,
+        0.6f,-0.6f, 0.6f,
+        0.6f, 0.6f, 0.6f,
+        0.6f,-0.6f,-0.6f,
+        0.6f, 0.6f,-0.6f,
+        0.6f,-0.6f,-0.6f,
+        0.6f, 0.6f, 0.6f,
+        0.6f,-0.6f, 0.6f,
+        0.6f, 0.6f, 0.6f,
+        0.6f, 0.6f,-0.6f,
+        -0.6f, 0.6f,-0.6f,
+        0.6f, 0.6f, 0.6f,
+        -0.6f, 0.6f,-0.6f,
+        -0.6f, 0.6f, 0.6f,
+        0.6f, 0.6f, 0.6f,
+        -0.6f, 0.6f, 0.6f,
+        0.6f,-0.6f, 0.6f
     };
 
     this->bounds.x = x;
     this->bounds.y = y;
-    this->bounds.width = 2.0f;
-    this->bounds.height = 2.0f;
-    //  = {x, y, 1.0f, 1.0f};
+    this->bounds.width = 1.2f;
+    this->bounds.height = 1.2f;
+    //  = {x, y, 0.6f, 0.6f};
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
 }
 
 void Special1::draw(glm::mat4 VP) {
-    Matrices.model = glm::mat4(1.0f);
+    Matrices.model = glm::mat4(0.6f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
@@ -82,12 +82,14 @@ void Special1::tick() {
     this->position.y += speed_y;
     
     this->speed_x = 0.1;
-    if (this->counter == store) {
-        this->speed_y = -0.1;
+
+    if ( this->counter >= store / 2 ) {
+        this->speed_y -= 0.01;
     }
-    if (this->counter == 0) {
-        this->speed_y = 0.1;
+    else {
+        this->speed_y += 0.01;
     }
+
     if (this->speed_y > 0) {
         this->counter++;
     }
@@ -107,54 +109,54 @@ Special2::Special2(float x, float y, color_t color, int count) {
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     static const GLfloat vertex_buffer_data[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
+        -0.6f,-0.6f,-0.6f, // triangle 1 : begin
+        -0.6f,-0.6f, 0.6f,
+        -0.6f, 0.6f, 0.6f, // triangle 1 : end
+        0.6f, 0.6f,-0.6f, // triangle 2 : begin
+        -0.6f,-0.6f,-0.6f,
+        -0.6f, 0.6f,-0.6f, // triangle 2 : end
+        0.6f,-0.6f, 0.6f,
+        -0.6f,-0.6f,-0.6f,
+        0.6f,-0.6f,-0.6f,
+        0.6f, 0.6f,-0.6f,
+        0.6f,-0.6f,-0.6f,
+        -0.6f,-0.6f,-0.6f,
+        -0.6f,-0.6f,-0.6f,
+        -0.6f, 0.6f, 0.6f,
+        -0.6f, 0.6f,-0.6f,
+        0.6f,-0.6f, 0.6f,
+        -0.6f,-0.6f, 0.6f,
+        -0.6f,-0.6f,-0.6f,
+        -0.6f, 0.6f, 0.6f,
+        -0.6f,-0.6f, 0.6f,
+        0.6f,-0.6f, 0.6f,
+        0.6f, 0.6f, 0.6f,
+        0.6f,-0.6f,-0.6f,
+        0.6f, 0.6f,-0.6f,
+        0.6f,-0.6f,-0.6f,
+        0.6f, 0.6f, 0.6f,
+        0.6f,-0.6f, 0.6f,
+        0.6f, 0.6f, 0.6f,
+        0.6f, 0.6f,-0.6f,
+        -0.6f, 0.6f,-0.6f,
+        0.6f, 0.6f, 0.6f,
+        -0.6f, 0.6f,-0.6f,
+        -0.6f, 0.6f, 0.6f,
+        0.6f, 0.6f, 0.6f,
+        -0.6f, 0.6f, 0.6f,
+        0.6f,-0.6f, 0.6f
     };
 
     this->bounds.x = x;
     this->bounds.y = y;
-    this->bounds.width = 2.0f;
-    this->bounds.height = 2.0f;
-    //  = {x, y, 1.0f, 1.0f};
+    this->bounds.width = 1.2f;
+    this->bounds.height = 1.2f;
+    //  = {x, y, 0.6f, 0.6f};
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
 }
 
 void Special2::draw(glm::mat4 VP) {
-    Matrices.model = glm::mat4(1.0f);
+    Matrices.model = glm::mat4(0.6f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
@@ -181,12 +183,13 @@ void Special2::tick() {
     this->position.y += speed_y;
     
     this->speed_x = 0.05;
-    if (this->counter == store) {
-        this->speed_y = -0.1;
+    if ( this->counter >= store / 2 ) {
+        this->speed_y -= 0.01;
     }
-    if (this->counter == 0) {
-        this->speed_y = 0.1;
+    else {
+        this->speed_y += 0.01;
     }
+
     if (this->speed_y > 0) {
         this->counter++;
     }
