@@ -35,6 +35,7 @@ GLFWwindow *window;
 // Special 2 array
 // Boomerang array
 
+bool beamcreated = false;
 
 Player player1;
 Brick actualfloor[15];
@@ -126,9 +127,17 @@ void draw() {
     for (int i = 0; i < flt; i++) {
         for (int j = 0; j < 30; j++) {
             line[i][j].draw(VP);
+            beam[0][j].draw(VP);
+            beam[1][j].draw(VP);
         }
     }
     // boomerang.draw(VP);
+    // for (int j = 0; j < 30; j++) {
+    //     beam[0][j].draw(VP);
+    // }
+    // for (int j = 0; j < 30; j++) {
+    //     beam[1][j].draw(VP);
+    // }
 
     // 5
     player1.draw(VP);
@@ -270,7 +279,13 @@ void tick_elements() {
     for (int i = 0; i < s2t; i++) {
         sp2[i].tick();
     }
-    // boomerang.tick();
+    for (int j = 0; j < 30; j++) {
+        beam[0][j].tick();
+    }
+    for (int j = 0; j < 30; j++) {
+        beam[1][j].tick();
+    }
+    boomerang.tick();
 
     // PANNING
     // If in pan range
@@ -350,11 +365,6 @@ void initGL(GLFWwindow *window, int width, int height) {
     cout << "Made floor, ceiling" << endl;
 
 
-    // for (int i = 0; i < 30; i++) {
-    //     par[i] = Parallax(3+0.2*i, 5, COLOR_RED, 100, 5);
-    //     par[i].set_speed(0, 0);
-    // }
-
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
     // Get a handle for our "MVP" uniform
@@ -417,8 +427,18 @@ void createMap() {
         cout << "Fireline added" << flt << endl;
     }
     if (value > 469 && value < 1469) {
-        // boomerang = Boomerang(i, 10, COLOR_BLUE, 100);
-        // boomerang.set_speed(0, 0);
+        boomerang = Boomerang(i, 10, COLOR_BLUE, 100);
+        boomerang.set_speed(0, 0);
+    }
+
+    if (value > 790 && value < 840/* && beamcreated && beam[0][0].position.y == 1000*/) {
+        for (int j = 0; j < 30; j++) {
+            beam[0][j] = Parallax(player1.position.x + 0.2*j, -5, COLOR_RED, 100, 5);
+        }
+        for (int j = 0; j < 30; j++) {
+            beam[1][j] = Parallax(player1.position.x + 0.2*j, 3, COLOR_RED, 100, 5);
+        }
+        beamcreated = true;
     }
 
     // Generating special powerups
@@ -439,6 +459,7 @@ void createMap() {
 
 
 int main(int argc, char **argv) {
+    cout << "starting" << endl;
     srand(time(0));
     int width  = 750;
     int height = 750;
