@@ -12,6 +12,7 @@
 #include "viserion.h"
 #include "magnet.h"
 #include "semi.h"
+#include "string.h"
 
 using namespace std;
 
@@ -229,6 +230,9 @@ void tick_input(GLFWwindow *window) {
 
 void tick_elements() {
 
+    if (player1.position.y < -1000) {
+        return;
+    }
     // Detect collision with Enemies:
     //      Detect collision with fireline 1
     //      Detect collision with fireline 2 TODO
@@ -552,7 +556,7 @@ void initGL(GLFWwindow *window, int width, int height) {
     // Player creation
     player1     = Player(0, 0, COLOR_BLACK);
     player1.set_speed(0, 0);
-    cout << "Made player" << endl;
+    // cout << "Made player" << endl;
 
     // Floor and Ceiling creation
     for (int i = 0; i < 30; i++) {
@@ -562,7 +566,7 @@ void initGL(GLFWwindow *window, int width, int height) {
         actualceil[i] = Brick(2*(i-14), 13, COLOR_GREEN);
         actualceil[i].set_speed(0, 0);
     }
-    cout << "Made floor, ceiling" << endl;
+    // cout << "Made floor, ceiling" << endl;
 
     magnet = Magnet(0, 10, COLOR_BLUE);
     magnet.set_speed(0, 0);
@@ -613,7 +617,7 @@ void createMap() {
             c1t++;
        
         
-        cout << "Coin1 added" << c1t << endl;
+        // cout << "Coin1 added" << c1t << endl;
     }
     if (value > 600 && value <= 700) {
         coins2[c2s] = Coin2(i, rand()%12, COLOR_BRED);
@@ -623,7 +627,7 @@ void createMap() {
         if (c2t != 15)
             c2t++;
 
-        cout << "Coin2 added" << c2t << endl;
+        // cout << "Coin2 added" << c2t << endl;
     }
     if (value > 700 && value <= 800 && c3t < 50) {
         coins3[c3s] = Coin3(i, rand()%12, COLOR_BURED);
@@ -633,7 +637,7 @@ void createMap() {
         if (c3t != 15)
             c3t++;
 
-        cout << "Coin3 added" << c3t << endl;
+        // cout << "Coin3 added" << c3t << endl;
     }
 
     if (value > 9999 && value < 10049) {
@@ -666,13 +670,13 @@ void createMap() {
         if (flt != 15)
             flt++;
 
-        cout << "Fireline added" << flt << endl;
+        // cout << "Fireline added" << flt << endl;
     }
     if (value > 469 && value < 1469 && ( !boomcreated || (boomcreated && boomerang.counter < -100) )) {
         boomerang = Boomerang(i, 25, COLOR_BLUE, 150);
         boomerang.set_speed(0, 0);
         boomcreated = true;
-        cout << "boomerang added" << endl;
+        // cout << "boomerang added" << endl;
     }
 
     if (value > 790 && value < 840 && ((beamcreated && beam[0][0].position.y > 100) || !beamcreated) )  {
@@ -683,7 +687,7 @@ void createMap() {
             beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 10, COLOR_RED, 100, 5);
         }
         beamcreated = true;
-        cout << "Fire beam on" << endl;
+        // cout << "Fire beam on" << endl;
     }
 
     // Generating special powerups
@@ -695,7 +699,7 @@ void createMap() {
         if (s1t != 15)
             s1t++;
             
-        cout << "Powerup 1 added" << s1t << endl;
+        // cout << "Powerup 1 added" << s1t << endl;
     }
 
     if (value > 757 && value <= 767) {
@@ -706,18 +710,18 @@ void createMap() {
         if (s2t != 15)
             s2t++;
         
-        cout << "Powerup 2 added" << s2t << endl;
+        // cout << "Powerup 2 added" << s2t << endl;
     }
 }
 
 
 int main(int argc, char **argv) {
-    cout << "starting" << endl;
+    // cout << "starting" << endl;
     srand(time(0));
     int width  = 750;
     int height = 750;
     int c = 0;
-
+    string base = "Score: ";
     window = initGLFW(width, height);
 
     initGL (window, width, height);
@@ -727,6 +731,57 @@ int main(int argc, char **argv) {
         // Process timers
 
         if (t60.processTick()) {
+            
+
+            int num = (int)player1.score;
+            // cout << num ;
+            string ret = "";
+            char x;
+            int dig;
+            while (num > 0) {
+                dig = num%10;
+                num/=10;
+                if(dig==0) {
+                    x = '0';
+                }
+                if(dig==1) {
+                    x = '1';
+                }
+                if(dig==2) {
+                    x = '2';
+                }
+                if(dig==3) {
+                    x = '3';
+                }
+                if(dig==4) {
+                    x = '4';
+                }
+                if(dig==5) {
+                    x = '5';
+                }
+                if(dig==6) {
+                    x = '6';
+                }
+                if(dig==7) {
+                    x = '7';
+                }
+                if(dig==8) {
+                    x = '8';
+                }
+                if(dig==9) {
+                    x = '9';
+                }
+                ret = x + ret;
+            }
+            // cout << ret;
+
+
+            string title = base + ret;
+            // cout << title << endl;
+            if (player1.position.y < -1000) {
+                title = "YOU DIED - GAME OVER";
+            }
+            glfwSetWindowTitle(window, title.c_str());
 
             if (spectimer > 0) {
                 spectimer--;
