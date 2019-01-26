@@ -38,22 +38,23 @@ GLFWwindow *window;
 bool beamcreated = false;
 
 Player player1;
-Brick actualfloor[15];
-Brick actualceil[15];
+Brick actualfloor[30];
+Brick actualceil[30];
 
 Coin1 coins1[15];
 Coin2 coins2[15];
 Coin3 coins3[15];
 
 int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0;
+int c1s = 0, c2s = 0, c3s = 0, fls = 0, s1s = 0, s2s = 0;
 
-Parallax beam[2][30];
+Parallax beam[2][100];
 Firelines line[15][30];
 Special1 sp1[15];
 Special2 sp2[15];
 Boomerang boomerang;
 
-float screen_zoom = 0.3, screen_center_x = 0, screen_center_y = 0;
+float screen_zoom = 0.15, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
 
 Timer t60(1.0 / 60);
@@ -83,7 +84,7 @@ void draw() {
     // For each model you render, since the MVP will be different (at least the M part)
     // Don't change unless you are sure!!
     glm::mat4 MVP;  // MVP = Projection * View * Model
-    // cout << "In tick_elements" << endl;
+    cout << "In draw" << endl;
 
 
 
@@ -99,45 +100,53 @@ void draw() {
 
 
     // Floor+Ceiling
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 30; i++) {
         actualfloor[i].draw(VP);
         actualceil[i].draw(VP);
     }
+    cout << "Drew floor" << endl;
 
     // Coins
-    for (int i = 0; i < c1t; i++) {
+    for (int i = 0; i < c1t; i=(i+1)%15) {
         coins1[i].draw(VP);
     }
-    for (int i = 0; i < c2t; i++) {
+    cout << "Drew coin1" << endl;
+    for (int i = 0; i < c2t; i=(i+1)%15) {
         coins2[i].draw(VP);
     }
-    for (int i = 0; i < c3t; i++) {
+    cout << "Drew coin2" << endl;
+    for (int i = 0; i < c3t; i=(i+1)%15) {
         coins3[i].draw(VP);
     }
+    cout << "Drew coin3" << endl;
 
     // Special
-    for (int i = 0; i < s1t; i++) {
+    for (int i = 0; i < s1t; i=(i+1)%15) {
         sp1[i].draw(VP);
     }
-    for (int i = 0; i < s2t; i++) {
+    cout << "Drew sp1" << endl;
+    for (int i = 0; i < s2t; i=(i+1)%15) {
         sp2[i].draw(VP);
     }
+    cout << "Drew sp2" << endl;
 
     // Fireline
-    for (int i = 0; i < flt; i++) {
+    for (int i = 0; i < flt; i=(i+1)%15) {
         for (int j = 0; j < 30; j++) {
             line[i][j].draw(VP);
+        }
+    }
+    cout << "Drew fireline" << endl;
+    // boomerang.draw(VP);
+    if (beamcreated) {
+        for (int j = 0; j < 100; j++) {
             beam[0][j].draw(VP);
+        }
+        for (int j = 0; j < 100; j++) {
             beam[1][j].draw(VP);
         }
     }
-    // boomerang.draw(VP);
-    // for (int j = 0; j < 30; j++) {
-    //     beam[0][j].draw(VP);
-    // }
-    // for (int j = 0; j < 30; j++) {
-    //     beam[1][j].draw(VP);
-    // }
+    cout << "Drew firebeam" << endl;
 
     // 5
     player1.draw(VP);
@@ -179,7 +188,7 @@ void tick_elements() {
 
     // COLLISIONS
     // Real floor
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 30; i++) {
         if ( detect_collision(player1.bounds, actualfloor[i].bounds) ) {
             if (player1.speed_y < 0) {
                 player1.set_position(player1.bounds.x, actualfloor[i].bounds.y + actualfloor[i].bounds.height);
@@ -188,7 +197,7 @@ void tick_elements() {
         }
     }
     // Real Ceiling
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 30; i++) {
         if ( detect_collision(player1.bounds, actualceil[i].bounds) ) {
             if (player1.speed_y > 0) {
                 player1.set_position(player1.bounds.x, actualceil[i].bounds.y - actualceil[i].bounds.height);
@@ -206,6 +215,16 @@ void tick_elements() {
             }
         }
     }
+
+    // // Firebeam
+    // for (int i = 0; i < 2; i++) {
+    //     for (int j = 0; j < 20; j++) {
+    //         if (detect_collision(player1.bounds, beam[i][j].bounds)) {
+    //             cout << "DIE DIE DIE" << endl;
+    //             player1.set_position(-100000, 0);
+    //         }
+    //     }
+    // } 
 
     // Coin type 1
     for (int i = 0; i < c1t; i++) {
@@ -279,17 +298,15 @@ void tick_elements() {
     for (int i = 0; i < s2t; i++) {
         sp2[i].tick();
     }
-    for (int j = 0; j < 30; j++) {
+    for (int j = 0; j < 100; j++) {
         beam[0][j].tick();
-    }
-    for (int j = 0; j < 30; j++) {
         beam[1][j].tick();
     }
     boomerang.tick();
 
     // PANNING
     // If in pan range
-    if ((player1.bounds.x >= 5 && player1.speed_x < 0) || (player1.bounds.x <= -10 && player1.speed_x > 0)) {
+    if ((player1.bounds.x >= 8 && player1.speed_x < 0) || (player1.bounds.x <= -23 && player1.speed_x > 0)) {
         // cout << "Player position: " << player1.bounds.x << endl;
         
         
@@ -355,11 +372,11 @@ void initGL(GLFWwindow *window, int width, int height) {
     cout << "Made player" << endl;
 
     // Floor and Ceiling creation
-    for (int i = 0; i < 15; i++) {
-        actualfloor[i] = Brick(2*(i-7), -13, COLOR_GREEN);
+    for (int i = 0; i < 30; i++) {
+        actualfloor[i] = Brick(2*(i-14), -13, COLOR_GREEN);
         actualfloor[i].set_speed(0, 0);
 
-        actualceil[i] = Brick(2*(i-7), 13, COLOR_GREEN);
+        actualceil[i] = Brick(2*(i-14), 13, COLOR_GREEN);
         actualceil[i].set_speed(0, 0);
     }
     cout << "Made floor, ceiling" << endl;
@@ -389,23 +406,37 @@ void initGL(GLFWwindow *window, int width, int height) {
 void createMap() {
     double player_location = player1.position.x;
     int value = rand() % 20000;
-    int i = (int)player_location + 25;
+    int i = (int)player_location + 35;
+    
     if (value > 500 && value <= 600) {
-        coins1[c1t] = Coin1(i, rand()%12, COLOR_ORED);
-        coins1[c1t].set_speed(0, 0);
-        c1t = (c1t + 1)%15;
+        coins1[c1s] = Coin1(i, rand()%12, COLOR_ORED);
+        coins1[c1s].set_speed(0, 0);
+        
+        c1s = (c1s + 1)%15;
+        if (c1t != 15)
+            c1t++;
+       
+        
         cout << "Coin1 added" << c1t << endl;
     }
     if (value > 600 && value <= 700) {
-        coins2[c2t] = Coin2(i, rand()%12, COLOR_BRED);
-        coins2[c2t].set_speed(0, 0);
-        c2t = (c2t + 1)%15;
+        coins2[c2s] = Coin2(i, rand()%12, COLOR_BRED);
+        coins2[c2s].set_speed(0, 0);
+        
+        c2s = (c2s + 1)%15;
+        if (c2t != 15)
+            c2t++;
+
         cout << "Coin2 added" << c2t << endl;
     }
     if (value > 700 && value <= 800 && c3t < 50) {
-        coins3[c3t] = Coin3(i, rand()%12, COLOR_BURED);
-        coins3[c3t].set_speed(0, 0);
-        c3t = (c3t + 1)%15;;
+        coins3[c3s] = Coin3(i, rand()%12, COLOR_BURED);
+        coins3[c3s].set_speed(0, 0);
+        
+        c3s = (c3s + 1)%15;
+        if (c3t != 15)
+            c3t++;
+
         cout << "Coin3 added" << c3t << endl;
     }
 
@@ -414,15 +445,13 @@ void createMap() {
     if(value > 38 && value <= 138) {
         int begin = rand() % 12;
         for (int j = 0; j < 30; j++) {
-            // if (rand() - RAND_MAX/2 > 0) {
-                line[flt][j] = Firelines(i+0.2*j, begin-12+0.2*j, COLOR_RED);
-                line[flt][j].set_speed(0, 0);
-            // }
-            // else {
-            //     line[flt][j] = Firelines(i+0.2*j, 10-0.2*j, COLOR_RED, -1, -1);
-            // }               
+            line[fls][j] = Firelines(i+0.2*j, begin-12+0.2*j, COLOR_RED);
+            line[fls][j].set_speed(0, 0);
         }
-        flt = (flt + 1)%15; 
+                
+        fls = (fls + 1)%15;
+        if (flt != 15)
+            flt++;
 
         cout << "Fireline added" << flt << endl;
     }
@@ -431,28 +460,37 @@ void createMap() {
         boomerang.set_speed(0, 0);
     }
 
-    if (value > 790 && value < 840/* && beamcreated && beam[0][0].position.y == 1000*/) {
-        for (int j = 0; j < 30; j++) {
-            beam[0][j] = Parallax(player1.position.x + 0.2*j, -5, COLOR_RED, 100, 5);
+    if (value > 790 && value < 840 && beamcreated && beam[0][0].position.y == 1000) {
+        for (int j = 0; j < 100; j++) {
+            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -5, COLOR_RED, 100, 5);
         }
-        for (int j = 0; j < 30; j++) {
-            beam[1][j] = Parallax(player1.position.x + 0.2*j, 3, COLOR_RED, 100, 5);
+        for (int j = 0; j < 100; j++) {
+            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 3, COLOR_RED, 100, 5);
         }
         beamcreated = true;
+        cout << "Fire beam on" << endl;
     }
 
     // Generating special powerups
     if (value > 298 && value <= 308 && s1t < 10) {
-        sp1[s1t] = Special1(i, 12, COLOR_PRED, 70);
-        sp1[s1t].set_speed(0, 0);
-        s1t = (s1t + 1)%15;
+        sp1[s1s] = Special1(i, 12, COLOR_PRED, 70);
+        sp1[s1s].set_speed(0, 0);
+        
+        s1s = (s1s + 1)%15;
+        if (s1t != 15)
+            s1t++;
+            
         cout << "Powerup 1 added" << s1t << endl;
     }
 
     if (value > 757 && value <= 767 && s2t < 10) {
-        sp2[s2t] = Special2(i, 12, COLOR_LPRED, 70);
-        sp2[s2t].set_speed(0, 0);
-        s2t = (s2t + 1)%15;
+        sp2[s2s] = Special2(i, 12, COLOR_LPRED, 70);
+        sp2[s2s].set_speed(0, 0);
+        
+        s2s = (s2s + 1)%15;
+        if (s2t != 15)
+            s2t++;
+        
         cout << "Powerup 2 added" << s2t << endl;
     }
 }
