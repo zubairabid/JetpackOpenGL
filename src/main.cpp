@@ -9,6 +9,8 @@
 #include "boomerang.h"
 #include "firelines.h"
 #include "balloon.h"
+#include "viserion.h"
+#include "magnet.h"
 
 using namespace std;
 
@@ -36,7 +38,11 @@ GLFWwindow *window;
 // Special 2 array
 // Boomerang array
 
-bool beamcreated = false, boomcreated = false, lock_shot = false;
+int limit = 30;
+bool pted = false;
+int spectimer = 0;
+
+bool beamcreated = false, boomcreated = false, lock_shot = false, viserup = false, icem = false;
 
 Player player1;
 Brick actualfloor[30];
@@ -46,7 +52,10 @@ Coin1 coins1[15];
 Coin2 coins2[15];
 Coin3 coins3[15];
 
+Magnet magnet;
+
 Balloon balloons[100];
+Balloon ice;
 
 int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0, bt = 0;
 int c1s = 0, c2s = 0, c3s = 0, fls = 0, s1s = 0, s2s = 0, bs = 0;
@@ -56,6 +65,7 @@ Firelines line[15][30];
 Special1 sp1[15];
 Special2 sp2[15];
 Boomerang boomerang;
+Viserion viser;
 
 float screen_zoom = 0.15, screen_center_x = 0, screen_center_y = 0;
 float camera_rotation_angle = 0;
@@ -145,6 +155,9 @@ void draw() {
     for (int i = 0; i < bt; i++) {
         balloons[i].draw(VP);
     }
+    if (icem) {
+        ice.draw(VP);
+    }
 
     // cout << "Drew fireline" << endl;
     if (boomcreated)
@@ -158,6 +171,15 @@ void draw() {
             beam[1][j].draw(VP);
         }
         // cout << "Drew firebeam" << endl;
+    }
+
+    if (viserup) {
+        // cout << "drawing viser";
+        viser.draw(VP);
+    }
+
+    if (magnet.timing > 0) {
+        magnet.draw(VP);
     }
 
     // 5
@@ -226,33 +248,43 @@ void tick_elements() {
         }
     }
 
-    // Fireline
-    for (int i = 0; i < flt; i++) {
-        for (int j = 0; j < 30; j++) {
-            if (detect_collision(player1.bounds, line[i][j].bounds)) {
-                cout << "DIE DIE DIE" << endl;
-                player1.set_position(-100000, 0);
-            }
-        }
-    }
-
-    // Firebeam
-    if (beamcreated) {
-        for (int i = 0; i < 2; i++) {
-            for (int j = 0; j < 100; j++) {
-                if (detect_collision(player1.bounds, beam[i][j].bounds)) {
+    if ( !pted ) {
+        // Fireline
+        for (int i = 0; i < flt; i++) {
+            for (int j = 0; j < 30; j++) {
+                if (detect_collision(player1.bounds, line[i][j].bounds)) {
                     cout << "DIE DIE DIE" << endl;
                     player1.set_position(-100000, 0);
                 }
             }
-        } 
-    }
+        }
 
-    // Boomerang
-    if (boomcreated) {
-        if (detect_collision(player1.bounds, boomerang.bounds)) {
-            cout << "DIE DIE DIE" << endl;
-            player1.set_position(-100000, 0);
+        // Firebeam
+        if (beamcreated) {
+            for (int i = 0; i < 2; i++) {
+                for (int j = 0; j < 100; j++) {
+                    if (detect_collision(player1.bounds, beam[i][j].bounds)) {
+                        cout << "DIE DIE DIE" << endl;
+                        player1.set_position(-100000, 0);
+                    }
+                }
+            } 
+        }
+
+        // Boomerang
+        if (boomcreated) {
+            if (detect_collision(player1.bounds, boomerang.bounds)) {
+                cout << "DIE DIE DIE" << endl;
+                player1.set_position(-100000, 0);
+            }
+        }
+
+        // Ice
+        if (icem) {
+            if (detect_collision(player1.bounds, ice.bounds)) {
+                cout << "DIE DIE DIE" << endl;
+                player1.set_position(-100000, 0);
+            }
         }
     }
 
@@ -296,15 +328,6 @@ void tick_elements() {
                 }
             }
         }
-        // // fireline
-        // for (int j = 0; j < flt; j++) {
-        //     for (int k = 0; k < 30; k++) {
-        //         if (detect_collision(balloons[i].bounds, line[j][k].bounds )) {
-        //             line[j][k].set_position(10000, 0);
-        //         }
-        //     }
-        // }
-
     }
 
     // Coin type 1
@@ -342,7 +365,12 @@ void tick_elements() {
         if ( detect_collision(player1.bounds, sp1[i].bounds) ) {
             sp1[i].set_speed_y(1000);
             sp1[i].tick();
-            player1.score += 100;
+            // player1.score += 100;
+            pted = true;
+            if (spectimer > 0) {
+                limit = 30;
+            }
+            spectimer = 600;
             cout << player1.score << endl;
         }
     }
@@ -351,7 +379,11 @@ void tick_elements() {
         if ( detect_collision(player1.bounds, sp2[i].bounds) ) {
             sp2[i].set_speed_y(1000);
             sp2[i].tick();
-            player1.score += 100;
+            limit = 1;
+            if (spectimer > 0) {
+                pted = false;
+            }
+            spectimer = 600;
             cout << player1.score << endl;
         }
     }
@@ -387,6 +419,23 @@ void tick_elements() {
         balloons[i].tick();
     }
     boomerang.tick();
+    ice.tick();
+
+    viser.set_position(23, player1.position.y);
+    viser.tick();
+
+
+    if (magnet.timing > 0) {
+        int x_off = magnet.position.x - player1.position.x;
+        int y_off = magnet.position.y - player1.position.y;
+
+        player1.set_speed(player1.speed_x - x_off/10, player1.speed_y+y_off/10);
+        // player1.position.x += x_off/40;
+        // player1.position.y -= y_off/40;
+        // player1.tick();
+    }
+
+    magnet.tick();
 
     // PANNING
     // If in pan range
@@ -465,6 +514,8 @@ void initGL(GLFWwindow *window, int width, int height) {
     }
     cout << "Made floor, ceiling" << endl;
 
+    magnet = Magnet(0, 10, COLOR_BLUE);
+    magnet.set_speed(0, 0);
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -492,6 +543,16 @@ void createMap() {
     int value = rand() % 20000;
     int i = (int)player_location + 35;
     
+    if (value >= 10 && value <= 15 && magnet.timing == 0) {
+        magnet.timing = 300;
+    }
+
+    if (value > 1000 && value < 10000 && ( !viserup || (viserup && viser.position.y > 100) )) {
+        viser = Viserion(player_location, 0, COLOR_WHITE);
+        viser.set_speed(0, 0);
+        viserup = true;
+    }
+
     if (value > 500 && value <= 600) {
         coins1[c1s] = Coin1(i, rand()%12, COLOR_ORED);
         coins1[c1s].set_speed(0, 0);
@@ -598,7 +659,16 @@ int main(int argc, char **argv) {
         // Process timers
 
         if (t60.processTick()) {
-            c = (c + 1) % 30;
+
+            if (spectimer > 0) {
+                spectimer--;
+            }
+            if (spectimer == 0) {
+                limit = 30;
+                pted = false;
+            }
+
+            c = (c + 1) % limit;
             if (c == 0)
                 lock_shot = false;
             // 60 fps
@@ -648,4 +718,14 @@ void fireshot() {
         bt++;
     
 
+}
+
+void iceshot() {
+    double x = viser.position.x;
+    double y = viser.position.y;
+
+
+    ice = Balloon((int)x, (int)y, COLOR_RED);
+    ice.set_speed(0.6, 0.3);
+    icem = true;
 }
