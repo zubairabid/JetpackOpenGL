@@ -8,6 +8,7 @@
 #include "special.h"
 #include "boomerang.h"
 #include "firelines.h"
+#include "balloon.h"
 
 using namespace std;
 
@@ -35,7 +36,7 @@ GLFWwindow *window;
 // Special 2 array
 // Boomerang array
 
-bool beamcreated = false, boomcreated = false;
+bool beamcreated = false, boomcreated = false, lock_shot = false;
 
 Player player1;
 Brick actualfloor[30];
@@ -45,8 +46,10 @@ Coin1 coins1[15];
 Coin2 coins2[15];
 Coin3 coins3[15];
 
-int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0;
-int c1s = 0, c2s = 0, c3s = 0, fls = 0, s1s = 0, s2s = 0;
+Balloon balloons[100];
+
+int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0, bt = 0;
+int c1s = 0, c2s = 0, c3s = 0, fls = 0, s1s = 0, s2s = 0, bs = 0;
 
 Parallax beam[2][100];
 Firelines line[15][30];
@@ -137,6 +140,12 @@ void draw() {
             line[i][j].draw(VP);
         }
     }
+
+    // Balloons
+    for (int i = 0; i < bt; i++) {
+        balloons[i].draw(VP);
+    }
+
     // cout << "Drew fireline" << endl;
     if (boomcreated)
         boomerang.draw(VP);
@@ -159,6 +168,8 @@ void tick_input(GLFWwindow *window) {
     int left  = glfwGetKey(window, GLFW_KEY_LEFT);
     int right = glfwGetKey(window, GLFW_KEY_RIGHT);
     int up = glfwGetKey(window, GLFW_KEY_SPACE);
+    int shot = glfwGetKey(window, GLFW_KEY_UP);
+    
     glfwSetScrollCallback(window, scroll_callback);
     
     if (left) {
@@ -169,6 +180,12 @@ void tick_input(GLFWwindow *window) {
     }
     if (up) {
         player1.set_speed_y(0.15);
+    }
+    if (shot) {
+        if (!lock_shot) {
+            fireshot();
+            lock_shot = true;
+        }
     }
 
     reset_screen();
@@ -231,11 +248,46 @@ void tick_elements() {
         } 
     }
 
+    // Boomerang
     if (boomcreated) {
         if (detect_collision(player1.bounds, boomerang.bounds)) {
             cout << "DIE DIE DIE" << endl;
             player1.set_position(-100000, 0);
         }
+    }
+
+    // Balloon and stuff
+    for (int i = 0; i < bt; i++) {
+
+        // fireline
+        for (int j = 0; j < flt; j++) {
+            for (int k = 0; k < 30; k++) {
+                if (detect_collision(balloons[i].bounds, line[j][k].bounds )) {
+                    for (int l = 0; l < 30; l++) {
+                        line[j][l].set_position(10000, 0);
+                    }
+                }
+            }
+        }
+        // firebeam
+        if (beamcreated) {
+            for (int j = 0; j < 2; j++) {
+                for (int k = 0; k < 100; k++) {
+                    if (detect_collision(balloons[i].bounds, beam[j][k].bounds )) {
+                        beam[j][k].set_position(10000, 0);
+                    }
+                }
+            }
+        }
+        // // fireline
+        // for (int j = 0; j < flt; j++) {
+        //     for (int k = 0; k < 30; k++) {
+        //         if (detect_collision(balloons[i].bounds, line[j][k].bounds )) {
+        //             line[j][k].set_position(10000, 0);
+        //         }
+        //     }
+        // }
+
     }
 
     // Coin type 1
@@ -313,6 +365,9 @@ void tick_elements() {
     for (int j = 0; j < 100; j++) {
         beam[0][j].tick();
         beam[1][j].tick();
+    }
+    for (int i = 0; i < bt; i++) {
+        balloons[i].tick();
     }
     boomerang.tick();
 
@@ -486,7 +541,7 @@ void createMap() {
     }
 
     // Generating special powerups
-    if (value > 298 && value <= 308 && s1t < 10) {
+    if (value > 298 && value <= 308) {
         sp1[s1s] = Special1(i, 12, COLOR_PRED, 70);
         sp1[s1s].set_speed(0, 0);
         
@@ -497,7 +552,7 @@ void createMap() {
         cout << "Powerup 1 added" << s1t << endl;
     }
 
-    if (value > 757 && value <= 767 && s2t < 10) {
+    if (value > 757 && value <= 767) {
         sp2[s2s] = Special2(i, 12, COLOR_LPRED, 70);
         sp2[s2s].set_speed(0, 0);
         
@@ -515,6 +570,7 @@ int main(int argc, char **argv) {
     srand(time(0));
     int width  = 750;
     int height = 750;
+    int c = 0;
 
     window = initGLFW(width, height);
 
@@ -525,6 +581,9 @@ int main(int argc, char **argv) {
         // Process timers
 
         if (t60.processTick()) {
+            c = (c + 1) % 60;
+            if (c == 0)
+                lock_shot = false;
             // 60 fps
             // OpenGL Draw commands
             draw();
@@ -557,4 +616,19 @@ void reset_screen() {
     float left   = screen_center_x - 4 / screen_zoom;
     float right  = screen_center_x + 4 / screen_zoom;
     Matrices.projection = glm::ortho(left, right, bottom, top, 1.0f, 500.0f);
+}
+
+void fireshot() {
+    double x = player1.position.x;
+    double y = player1.position.y;
+
+
+    balloons[bs] = Balloon((int)x, (int)y, COLOR_BLUE);
+    balloons[bs].set_speed(-0.3, 0.3);
+
+    bs = (bs + 1)%100;
+    if (bt != 100)
+        bt++;
+    
+
 }

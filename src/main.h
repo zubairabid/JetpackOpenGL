@@ -84,6 +84,7 @@ bool detect_slant_collision(bounding_box_t a, bounding_box_custom b);
 extern float screen_zoom, screen_center_x, screen_center_y;
 void reset_screen();
 void createMap();
+void fireshot();
 
 // ---- Colors ----
 extern const color_t COLOR_RED;
