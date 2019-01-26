@@ -279,6 +279,23 @@ void tick_elements() {
                 }
             }
         }
+        // ceiling, floor
+        for (int j = 0; j < 30; j++) {
+            if ( detect_collision(balloons[i].bounds, actualceil[j].bounds) ) {
+                if (balloons[i].speed_y > 0) {
+                    balloons[i].set_position(balloons[i].bounds.x, actualceil[j].bounds.y - actualceil[j].bounds.height);
+                    balloons[i].set_speed_y(0); 
+                }
+            }
+        }
+        for (int j = 0; j < 30; j++) {
+            if ( detect_collision(balloons[i].bounds, actualfloor[j].bounds) ) {
+                if (balloons[i].speed_y < 0) {
+                    balloons[i].set_position(balloons[i].bounds.x, actualfloor[j].bounds.y + actualfloor[j].bounds.height);
+                    balloons[i].set_speed_y(0); 
+                }
+            }
+        }
         // // fireline
         // for (int j = 0; j < flt; j++) {
         //     for (int k = 0; k < 30; k++) {
@@ -581,7 +598,7 @@ int main(int argc, char **argv) {
         // Process timers
 
         if (t60.processTick()) {
-            c = (c + 1) % 60;
+            c = (c + 1) % 30;
             if (c == 0)
                 lock_shot = false;
             // 60 fps
