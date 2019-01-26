@@ -8,75 +8,6 @@ Player::Player(float x, float y, color_t color) {
     this->drag_y = 0;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
-    static const GLfloat vertex_buffer_data[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
-    };
-
-    static const GLfloat triangle_vertex_buffer[] = {
-        1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f,
-        0.0f, -2.0f, 0.0f,
-        1.0f, -1.0f, 1.0f,
-        -1.0f, -1.0f, 1.0f,
-        0.0f, -2.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        0.0f, -2.0f, 0.0f,
-        -1.0f, -1.0f, -1.0f,
-        -1.0f, -1.0f, 1.0f,
-        0.0f, -2.0f, 0.0f
-    };
-
-    static const GLfloat triangle2_vertex_buffer[] = {
-        1.0f, 1.0f, -1.0f,
-        1.0f, 1.0f, 1.0f,
-        2.0f, 0.0f, 0.0f,
-        1.0f, 1.0f, -1.0f,
-        1.0f, -1.0f, -1.0f,
-        2.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        2.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, -1.0f,
-        2.0f, 0.0f, 0.0f        
-    };
-
     static const GLfloat body_buf[] = {
         0.0f, 1.0f, 0.0f,
         0.0f, -1.0f, 0.0f,
@@ -110,10 +41,20 @@ Player::Player(float x, float y, color_t color) {
         1.5f, 0.0f, 0.0f
     };
 
-    // static const GLfloat shield_vertex_buffer[] = {
-    //     2.0f, 2.0f, 2.0f,
-    //     -2.0f, 2.0f, 2.0f,
-    // }
+    static const GLfloat shield_buf[] = {
+        2.0f, 2.0f, 0.0f,
+        2.0f, -2.0f, 0.0f,
+        2.1f, 2.0f, 0.0f,
+        2.1f, -2.0f, 0.0f,
+        2.0f, -2.0f, 0.0f,
+        2.1f, 2.0f, 0.0f,
+        -2.0f, 2.0f, 0.0f,
+        -2.0f, -2.0f, 0.0f,
+        -2.1f, 2.0f, 0.0f,
+        -2.1f, -2.0f, 0.0f,
+        -2.0f, -2.0f, 0.0f,
+        -2.1f, 2.0f, 0.0f,
+    };
     
 
     this->bounds.x = x;
@@ -121,10 +62,8 @@ Player::Player(float x, float y, color_t color) {
     this->bounds.width = 2.0f;
     this->bounds.height = 2.0f;
     //  = {x, y, 1.0f, 1.0f};
-    this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
-    this->flame = create3DObject(GL_TRIANGLES, 4*3, triangle_vertex_buffer, COLOR_RED, GL_FILL);
-    this->flame2 = create3DObject(GL_TRIANGLES, 4*3, triangle2_vertex_buffer, COLOR_BLUE, GL_FILL);
     
+    this->shield = create3DObject(GL_TRIANGLES, 12*3, shield_buf, COLOR_GREEN, GL_FILL);
     this->head = create3DObject(GL_TRIANGLES, 6*3, head_buf, color, GL_FILL);
     this->body = create3DObject(GL_TRIANGLES, 3*3, body_buf, color, GL_FILL);
     this->back = create3DObject(GL_TRIANGLES, 3*3, back_buf, color, GL_FILL);
@@ -138,9 +77,6 @@ void Player::draw(glm::mat4 VP) {
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    // draw3DObject(this->object);
-    // draw3DObject(this->flame);
-    // draw3DObject(this->flame2);
     draw3DObject(this->head);
     draw3DObject(this->body);
     draw3DObject(this->back);
@@ -153,7 +89,6 @@ void Player::draw_flame(glm::mat4 VP) {
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    // draw3DObject(this->flame);
     draw3DObject(this->propel);
 }
 
@@ -163,10 +98,17 @@ void Player::draw_flame2(glm::mat4 VP) {
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    // draw3DObject(this->flame2);
     draw3DObject(this->gun);
 }
 
+void Player::draw_shield(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate (this->position);    // glTranslatef
+    Matrices.model *= translate;
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->shield);
+}
 
 void Player::set_speed(double speed_x, double speed_y) {
     this->speed_x = speed_x;

@@ -199,6 +199,9 @@ void draw() {
     if (limit == 1) {
         player1.draw_flame2(VP);
     }
+    if (pted) {
+        player1.draw_shield(VP);
+    }
 }
 
 void tick_input(GLFWwindow *window) {
@@ -662,7 +665,7 @@ void createMap() {
     if(value > 38 && value <= 138) {
         int begin = rand() % 12;
         for (int j = 0; j < 30; j++) {
-            line[fls][j] = Firelines(i+0.2*j, begin-12+0.2*j, COLOR_RED);
+            line[fls][j] = Firelines(i+0.2*j, begin-12+0.2*j, j==0||j==29?COLOR_GREY:COLOR_RED);
             line[fls][j].set_speed(0, 0);
         }
                 
@@ -681,10 +684,10 @@ void createMap() {
 
     if (value > 790 && value < 840 && ((beamcreated && beam[0][0].position.y > 100) || !beamcreated) )  {
         for (int j = 0; j < 100; j++) {
-            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -2, SHADE_RED, 100, 5);
+            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -2, j==0||j==99?COLOR_GREY:SHADE_RED, 100, 5);
         }
         for (int j = 0; j < 100; j++) {
-            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 10, SHADE_RED, 100, 5);
+            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 10, j==0||j==99?COLOR_GREY:SHADE_RED, 100, 5);
         }
         beamcreated = true;
         // cout << "Fire beam on" << endl;

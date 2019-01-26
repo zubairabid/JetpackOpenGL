@@ -12,6 +12,7 @@ public:
     void tick();
     void draw_flame(glm::mat4 VP);
     void draw_flame2(glm::mat4 VP);
+    void draw_shield(glm::mat4 VP);
     double dsp;
     double speed_x;
     double speed_y;
@@ -24,14 +25,12 @@ public:
     bounding_box_t bounds;
     double score;
 private:
-    VAO *object;
-    VAO *flame;
-    VAO *flame2;
     VAO *head;
     VAO *body;
     VAO *back;
     VAO *propel;
     VAO *gun;
+    VAO *shield;
 };
 
 #endif
