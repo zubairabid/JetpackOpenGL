@@ -602,7 +602,7 @@ void createMap() {
         magnet.timing = 300;
     }
 
-    if (value > 1000 && value < 10000 && ( !viserup || (viserup && viser.position.y > 100) )) {
+    if (value > 1000 && value < 1100 && ( !viserup || (viserup && viser.position.y > 100) )) {
         viser = Viserion(player_location, 0, COLOR_WHITE);
         viser.set_speed(0, 0);
         viserup = true;
@@ -672,8 +672,8 @@ void createMap() {
 
         // cout << "Fireline added" << flt << endl;
     }
-    if (value > 469 && value < 1469 && ( !boomcreated || (boomcreated && boomerang.counter < -100) )) {
-        boomerang = Boomerang(i, 25, COLOR_BLUE, 150);
+    if (value > 469 && value < 569 && ( !boomcreated || (boomcreated && boomerang.counter < -100) )) {
+        boomerang = Boomerang(i, 15, COLOR_BLUE, 160);
         boomerang.set_speed(0, 0);
         boomcreated = true;
         // cout << "boomerang added" << endl;

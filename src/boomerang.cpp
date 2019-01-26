@@ -89,7 +89,7 @@ void Boomerang::tick() {
     this->position.y += speed_y;
 
     if ( this->counter >= store / 2 ) {
-        this->speed_y -= 0.003;
+        this->speed_y -= 0.0015;
         this->speed_x += 0.009;
     }
     else {
