@@ -35,7 +35,7 @@ GLFWwindow *window;
 // Special 2 array
 // Boomerang array
 
-bool beamcreated = false;
+bool beamcreated = false, boomcreated = false;
 
 Player player1;
 Brick actualfloor[30];
@@ -84,7 +84,7 @@ void draw() {
     // For each model you render, since the MVP will be different (at least the M part)
     // Don't change unless you are sure!!
     glm::mat4 MVP;  // MVP = Projection * View * Model
-    cout << "In draw" << endl;
+    // cout << "In draw" << endl;
 
 
 
@@ -104,49 +104,52 @@ void draw() {
         actualfloor[i].draw(VP);
         actualceil[i].draw(VP);
     }
-    cout << "Drew floor" << endl;
+    // cout << "Drew floor" << endl;
 
     // Coins
-    for (int i = 0; i < c1t; i=(i+1)%15) {
+    for (int i = 0; i < c1t; i++) {
+        // cout << "drawing c1: " << i << endl;
         coins1[i].draw(VP);
     }
-    cout << "Drew coin1" << endl;
-    for (int i = 0; i < c2t; i=(i+1)%15) {
+    // cout << "Drew coin1" << endl;
+    for (int i = 0; i < c2t; i++) {
         coins2[i].draw(VP);
     }
-    cout << "Drew coin2" << endl;
-    for (int i = 0; i < c3t; i=(i+1)%15) {
+    // cout << "Drew coin2" << endl;
+    for (int i = 0; i < c3t; i++) {
         coins3[i].draw(VP);
     }
-    cout << "Drew coin3" << endl;
+    // cout << "Drew coin3" << endl;
 
     // Special
-    for (int i = 0; i < s1t; i=(i+1)%15) {
+    for (int i = 0; i < s1t; i++) {
         sp1[i].draw(VP);
     }
-    cout << "Drew sp1" << endl;
-    for (int i = 0; i < s2t; i=(i+1)%15) {
+    // cout << "Drew sp1" << endl;
+    for (int i = 0; i < s2t; i++) {
         sp2[i].draw(VP);
     }
-    cout << "Drew sp2" << endl;
+    // cout << "Drew sp2" << endl;
 
     // Fireline
-    for (int i = 0; i < flt; i=(i+1)%15) {
+    for (int i = 0; i < flt; i++) {
         for (int j = 0; j < 30; j++) {
             line[i][j].draw(VP);
         }
     }
-    cout << "Drew fireline" << endl;
-    // boomerang.draw(VP);
-    if (beamcreated) {
+    // cout << "Drew fireline" << endl;
+    if (boomcreated)
+        boomerang.draw(VP);
+
+    if (beamcreated && beam[0][0].position.y < 100) {
         for (int j = 0; j < 100; j++) {
             beam[0][j].draw(VP);
         }
         for (int j = 0; j < 100; j++) {
             beam[1][j].draw(VP);
         }
+        // cout << "Drew firebeam" << endl;
     }
-    cout << "Drew firebeam" << endl;
 
     // 5
     player1.draw(VP);
@@ -216,15 +219,24 @@ void tick_elements() {
         }
     }
 
-    // // Firebeam
-    // for (int i = 0; i < 2; i++) {
-    //     for (int j = 0; j < 20; j++) {
-    //         if (detect_collision(player1.bounds, beam[i][j].bounds)) {
-    //             cout << "DIE DIE DIE" << endl;
-    //             player1.set_position(-100000, 0);
-    //         }
-    //     }
-    // } 
+    // Firebeam
+    if (beamcreated) {
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < 100; j++) {
+                if (detect_collision(player1.bounds, beam[i][j].bounds)) {
+                    cout << "DIE DIE DIE" << endl;
+                    player1.set_position(-100000, 0);
+                }
+            }
+        } 
+    }
+
+    if (boomcreated) {
+        if (detect_collision(player1.bounds, boomerang.bounds)) {
+            cout << "DIE DIE DIE" << endl;
+            player1.set_position(-100000, 0);
+        }
+    }
 
     // Coin type 1
     for (int i = 0; i < c1t; i++) {
@@ -455,17 +467,19 @@ void createMap() {
 
         cout << "Fireline added" << flt << endl;
     }
-    if (value > 469 && value < 1469) {
-        boomerang = Boomerang(i, 10, COLOR_BLUE, 100);
+    if (value > 469 && value < 1469 && ( !boomcreated || (boomcreated && boomerang.counter < -100) )) {
+        boomerang = Boomerang(i, 25, COLOR_BLUE, 150);
         boomerang.set_speed(0, 0);
+        boomcreated = true;
+        cout << "boomerang added" << endl;
     }
 
-    if (value > 790 && value < 840 && beamcreated && beam[0][0].position.y == 1000) {
+    if (value > 790 && value < 840 && ((beamcreated && beam[0][0].position.y > 100) || !beamcreated) )  {
         for (int j = 0; j < 100; j++) {
-            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -5, COLOR_RED, 100, 5);
+            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -2, COLOR_RED, 100, 5);
         }
         for (int j = 0; j < 100; j++) {
-            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 3, COLOR_RED, 100, 5);
+            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 10, COLOR_RED, 100, 5);
         }
         beamcreated = true;
         cout << "Fire beam on" << endl;

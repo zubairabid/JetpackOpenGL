@@ -9,54 +9,54 @@ Boomerang::Boomerang(float x, float y, color_t color, int count) {
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     static const GLfloat vertex_buffer_data[] = {
-        -1.0f,-1.0f,-1.0f, // triangle 1 : begin
-        -1.0f,-1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f, // triangle 1 : end
-        1.0f, 1.0f,-1.0f, // triangle 2 : begin
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f, // triangle 2 : end
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        -1.0f,-1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        -1.0f,-1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f,-1.0f,
-        1.0f,-1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f,-1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f,-1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f, 1.0f, 1.0f,
-        -1.0f, 1.0f, 1.0f,
-        1.0f,-1.0f, 1.0f
+        -0.4f,-0.4f,-0.4f, // triangle 1 : begin
+        -0.4f,-0.4f, 0.4f,
+        -0.4f, 0.4f, 0.4f, // triangle 1 : end
+        0.4f, 0.4f,-0.4f, // triangle 2 : begin
+        -0.4f,-0.4f,-0.4f,
+        -0.4f, 0.4f,-0.4f, // triangle 2 : end
+        0.4f,-0.4f, 0.4f,
+        -0.4f,-0.4f,-0.4f,
+        0.4f,-0.4f,-0.4f,
+        0.4f, 0.4f,-0.4f,
+        0.4f,-0.4f,-0.4f,
+        -0.4f,-0.4f,-0.4f,
+        -0.4f,-0.4f,-0.4f,
+        -0.4f, 0.4f, 0.4f,
+        -0.4f, 0.4f,-0.4f,
+        0.4f,-0.4f, 0.4f,
+        -0.4f,-0.4f, 0.4f,
+        -0.4f,-0.4f,-0.4f,
+        -0.4f, 0.4f, 0.4f,
+        -0.4f,-0.4f, 0.4f,
+        0.4f,-0.4f, 0.4f,
+        0.4f, 0.4f, 0.4f,
+        0.4f,-0.4f,-0.4f,
+        0.4f, 0.4f,-0.4f,
+        0.4f,-0.4f,-0.4f,
+        0.4f, 0.4f, 0.4f,
+        0.4f,-0.4f, 0.4f,
+        0.4f, 0.4f, 0.4f,
+        0.4f, 0.4f,-0.4f,
+        -0.4f, 0.4f,-0.4f,
+        0.4f, 0.4f, 0.4f,
+        -0.4f, 0.4f,-0.4f,
+        -0.4f, 0.4f, 0.4f,
+        0.4f, 0.4f, 0.4f,
+        -0.4f, 0.4f, 0.4f,
+        0.4f,-0.4f, 0.4f
     };
 
     this->bounds.x = x;
     this->bounds.y = y;
-    this->bounds.width = 2.0f;
-    this->bounds.height = 2.0f;
-    //  = {x, y, 1.0f, 1.0f};
+    this->bounds.width = 0.8f;
+    this->bounds.height = 0.8f;
+    //  = {x, y, 0.4f, 0.4f};
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
 }
 
 void Boomerang::draw(glm::mat4 VP) {
-    Matrices.model = glm::mat4(1.0f);
+    Matrices.model = glm::mat4(0.4f);
     glm::mat4 translate = glm::translate (this->position);    // glTranslatef
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
@@ -103,6 +103,7 @@ void Boomerang::tick() {
     else {
         this->counter--;
     }
+
     
     this->bounds.x = this->position.x;
     this->bounds.y = this->position.y;
