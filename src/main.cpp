@@ -11,6 +11,7 @@
 #include "balloon.h"
 #include "viserion.h"
 #include "magnet.h"
+#include "semi.h"
 
 using namespace std;
 
@@ -41,6 +42,7 @@ GLFWwindow *window;
 int limit = 30;
 bool pted = false;
 int spectimer = 0;
+bool disablejump = false;
 
 bool beamcreated = false, boomcreated = false, lock_shot = false, viserup = false, icem = false;
 
@@ -53,12 +55,13 @@ Coin2 coins2[15];
 Coin3 coins3[15];
 
 Magnet magnet;
+Semi semi[15][32];
 
 Balloon balloons[100];
 Balloon ice;
 
-int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0, bt = 0;
-int c1s = 0, c2s = 0, c3s = 0, fls = 0, s1s = 0, s2s = 0, bs = 0;
+int c1t = 0, c2t = 0, c3t = 0, flt = 0, s1t = 0, s2t = 0, bt = 0, sct = 0;
+int c1s = 0, c2s = 0, c3s = 0, fls = 0, s1s = 0, s2s = 0, bs = 0, scs = 0;
 
 Parallax beam[2][100];
 Firelines line[15][30];
@@ -173,6 +176,11 @@ void draw() {
         // cout << "Drew firebeam" << endl;
     }
 
+    for(int i = 0; i < sct; i++) {
+        for(int j = 0; j < 32; j++) {
+            semi[i][j].draw(VP);
+        }
+    }
     if (viserup) {
         // cout << "drawing viser";
         viser.draw(VP);
@@ -206,7 +214,7 @@ void tick_input(GLFWwindow *window) {
     else if (right) {
         player1.set_speed_x(-0.10);
     }
-    if (up) {
+    if (up && !disablejump) {
         player1.set_speed_y(0.15);
     }
     if (shot) {
@@ -254,7 +262,29 @@ void tick_elements() {
         }
     }
 
+    // RING
+    for(int i = 0; i < sct; i++) {
+        for(int j = 0; j < 32; j++) {
+            if (detect_collision(player1.bounds, semi[i][j].bounds)) {
+                // cout << "collision";
+                disablejump = true;
+                pted = true;
+                spectimer = 60;
+                player1.drag_x = 0;
+                player1.drag_y = 0;
+                player1.speed_x = 0;
+                player1.speed_y = 0;
+            }
+            // else {
+            //     disablejump = false;
+            //     pted = false;
+            // }
+        }
+    }
+
+
     if ( !pted ) {
+        // cout << "Checking for collision";
         // Fireline
         for (int i = 0; i < flt; i++) {
             for (int j = 0; j < 30; j++) {
@@ -424,6 +454,11 @@ void tick_elements() {
     for (int i = 0; i < bt; i++) {
         balloons[i].tick();
     }
+    for(int i = 0; i < sct; i++) {
+        for(int j = 0; j < 32; j++) {
+            semi[i][j].tick();
+        }
+    }
     boomerang.tick();
     ice.tick();
 
@@ -437,10 +472,6 @@ void tick_elements() {
 
         player1.drag_x = x_off/15;
         player1.drag_y = y_off/15;
-        // player1.set_speed(player1.speed_x - x_off/10, player1.speed_y+y_off/10);
-        // player1.position.x += x_off/40;
-        // player1.position.y -= y_off/40;
-        // player1.tick();
     }
     else {
         player1.drag_x = 0;
@@ -490,6 +521,12 @@ void tick_elements() {
             sp2[i].tick();
             sp2[i].position.x += player1.speed_x;
         }
+        for(int i = 0; i < sct; i++) {
+            for(int j = 0; j < 32; j++) {
+                semi[i][j].set_speed_x(semi[i][j].speed_x - player1.speed_x);
+                semi[i][j].tick();
+            }
+        }
         
         // DO NOT MOVE PLAYER
         player1.set_speed_x(0);
@@ -528,6 +565,7 @@ void initGL(GLFWwindow *window, int width, int height) {
 
     magnet = Magnet(0, 10, COLOR_BLUE);
     magnet.set_speed(0, 0);
+    
 
     // Create and compile our GLSL program from the shaders
     programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -555,7 +593,7 @@ void createMap() {
     int value = rand() % 20000;
     int i = (int)player_location + 35;
     
-    if (value >= 10 && value <= 1000 && magnet.timing == 0) {
+    if (value >= 10 && value <= 30 && magnet.timing == 0) {
         magnet.timing = 300;
     }
 
@@ -595,6 +633,18 @@ void createMap() {
             c3t++;
 
         cout << "Coin3 added" << c3t << endl;
+    }
+
+    if (value > 9999 && value < 10099) {
+        int height = rand() % 20 - 10;
+        for (int j = 0; j < 32; j++) {
+            semi[scs][j] = Semi(i+j*0.6, height, COLOR_BLACK);
+            semi[scs][j].set_speed(0, 0);
+        }
+
+        scs = (scs + 1) % 15;
+        if (sct != 15) 
+            sct++;
     }
 
 
@@ -678,6 +728,8 @@ int main(int argc, char **argv) {
             if (spectimer == 0) {
                 limit = 30;
                 pted = false;
+                disablejump = false;
+                // cout << "Disabled extras";s
             }
 
             c = (c + 1) % limit;
