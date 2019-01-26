@@ -91,6 +91,7 @@ void iceshot();
 extern const color_t COLOR_RED;
 extern const color_t COLOR_GREEN;
 extern const color_t COLOR_BLACK;
+extern const color_t COLOR_GREY;
 extern const color_t COLOR_BACKGROUND;
 extern const color_t COLOR_WHITE;
 extern const color_t COLOR_BLUE;
@@ -99,5 +100,16 @@ extern const color_t COLOR_PRED;
 extern const color_t COLOR_ORED;
 extern const color_t COLOR_BRED;
 extern const color_t COLOR_BURED;
-
+extern const color_t SHADE_RED;
+extern const color_t SHADE_ORANGE;
+extern const color_t SHADE_YELLOW;
+extern const color_t SHADE_LEMON;
+extern const color_t SHADE_GREEN;
+extern const color_t SHADE_TEAL;
+extern const color_t SHADE_CYAN;
+extern const color_t SHADE_BLUE;
+extern const color_t SHADE_PRUSSIAN;
+extern const color_t SHADE_VIOLET;
+extern const color_t SHADE_PURPLE;
+extern const color_t SHADE_PINK;
 #endif

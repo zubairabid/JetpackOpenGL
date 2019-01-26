@@ -77,6 +77,39 @@ Player::Player(float x, float y, color_t color) {
         2.0f, 0.0f, 0.0f        
     };
 
+    static const GLfloat body_buf[] = {
+        0.0f, 1.0f, 0.0f,
+        0.0f, -1.0f, 0.0f,
+        1.0f, -1.0f, 0.0f
+    };
+
+    static const GLfloat head_buf[] = {
+        0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,
+        1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f
+    };
+
+    static const GLfloat back_buf[] = {
+        0.0f, 1.0f, 0.0f,
+        0.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f
+    };
+
+    static const GLfloat propel_buf[] = {
+        0.0f, 0.0f, 0.0f,
+        -1.0f, 0.0f, 0.0f,
+        -0.5f, -1.0f, 0.0f
+    };
+
+    static const GLfloat gun_buf[] = {
+        1.0f, -0.2f, 0.0f, 
+        1.0f, 0.2f, 0.0f,
+        1.5f, 0.0f, 0.0f
+    };
+
     // static const GLfloat shield_vertex_buffer[] = {
     //     2.0f, 2.0f, 2.0f,
     //     -2.0f, 2.0f, 2.0f,
@@ -92,6 +125,11 @@ Player::Player(float x, float y, color_t color) {
     this->flame = create3DObject(GL_TRIANGLES, 4*3, triangle_vertex_buffer, COLOR_RED, GL_FILL);
     this->flame2 = create3DObject(GL_TRIANGLES, 4*3, triangle2_vertex_buffer, COLOR_BLUE, GL_FILL);
     
+    this->head = create3DObject(GL_TRIANGLES, 6*3, head_buf, color, GL_FILL);
+    this->body = create3DObject(GL_TRIANGLES, 3*3, body_buf, color, GL_FILL);
+    this->back = create3DObject(GL_TRIANGLES, 3*3, back_buf, color, GL_FILL);
+    this->propel = create3DObject(GL_TRIANGLES, 3*3, propel_buf, COLOR_RED, GL_FILL);
+    this->gun = create3DObject(GL_TRIANGLES, 3*3, gun_buf, COLOR_BLUE, GL_FILL);
 }
 
 void Player::draw(glm::mat4 VP) {
@@ -100,9 +138,12 @@ void Player::draw(glm::mat4 VP) {
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    draw3DObject(this->object);
+    // draw3DObject(this->object);
     // draw3DObject(this->flame);
     // draw3DObject(this->flame2);
+    draw3DObject(this->head);
+    draw3DObject(this->body);
+    draw3DObject(this->back);
     
 }
 
@@ -112,7 +153,8 @@ void Player::draw_flame(glm::mat4 VP) {
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    draw3DObject(this->flame);
+    // draw3DObject(this->flame);
+    draw3DObject(this->propel);
 }
 
 void Player::draw_flame2(glm::mat4 VP) {
@@ -121,7 +163,8 @@ void Player::draw_flame2(glm::mat4 VP) {
     Matrices.model *= translate;
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    draw3DObject(this->flame2);
+    // draw3DObject(this->flame2);
+    draw3DObject(this->gun);
 }
 
 

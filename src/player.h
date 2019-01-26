@@ -27,6 +27,11 @@ private:
     VAO *object;
     VAO *flame;
     VAO *flame2;
+    VAO *head;
+    VAO *body;
+    VAO *back;
+    VAO *propel;
+    VAO *gun;
 };
 
 #endif

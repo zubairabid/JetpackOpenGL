@@ -560,10 +560,10 @@ void initGL(GLFWwindow *window, int width, int height) {
 
     // Floor and Ceiling creation
     for (int i = 0; i < 30; i++) {
-        actualfloor[i] = Brick(2*(i-14), -13, COLOR_GREEN);
+        actualfloor[i] = Brick(2*(i-14), -13, SHADE_TEAL);
         actualfloor[i].set_speed(0, 0);
 
-        actualceil[i] = Brick(2*(i-14), 13, COLOR_GREEN);
+        actualceil[i] = Brick(2*(i-14), 13, SHADE_TEAL);
         actualceil[i].set_speed(0, 0);
     }
     // cout << "Made floor, ceiling" << endl;
@@ -603,13 +603,13 @@ void createMap() {
     }
 
     if (value > 1000 && value < 1100 && ( !viserup || (viserup && viser.position.y > 100) )) {
-        viser = Viserion(player_location, 0, COLOR_WHITE);
+        viser = Viserion(player_location, 0, SHADE_PINK);
         viser.set_speed(0, 0);
         viserup = true;
     }
 
     if (value > 500 && value <= 600) {
-        coins1[c1s] = Coin1(i, rand()%12, COLOR_ORED);
+        coins1[c1s] = Coin1(i, rand()%12, SHADE_CYAN);
         coins1[c1s].set_speed(0, 0);
         
         c1s = (c1s + 1)%15;
@@ -620,7 +620,7 @@ void createMap() {
         // cout << "Coin1 added" << c1t << endl;
     }
     if (value > 600 && value <= 700) {
-        coins2[c2s] = Coin2(i, rand()%12, COLOR_BRED);
+        coins2[c2s] = Coin2(i, rand()%12, SHADE_BLUE);
         coins2[c2s].set_speed(0, 0);
         
         c2s = (c2s + 1)%15;
@@ -629,8 +629,8 @@ void createMap() {
 
         // cout << "Coin2 added" << c2t << endl;
     }
-    if (value > 700 && value <= 800 && c3t < 50) {
-        coins3[c3s] = Coin3(i, rand()%12, COLOR_BURED);
+    if (value > 700 && value <= 800) {
+        coins3[c3s] = Coin3(i, rand()%12, SHADE_PRUSSIAN);
         coins3[c3s].set_speed(0, 0);
         
         c3s = (c3s + 1)%15;
@@ -640,7 +640,7 @@ void createMap() {
         // cout << "Coin3 added" << c3t << endl;
     }
 
-    if (value > 9999 && value < 10049) {
+    if (value > 9999 && value < 10019) {
         int height = rand() % 20 - 10;
         double add = 0;
         for (int j = 0; j < 32; j++) {
@@ -648,7 +648,7 @@ void createMap() {
                 add += (0.6*((16-j)/16.0));
             else
                 add -= (0.6*((j-16)/16.0));
-            semi[scs][j] = Semi(i+j*0.6, height+add, COLOR_BLACK);
+            semi[scs][j] = Semi(i+j*0.6, height+add, COLOR_GREY);
             semi[scs][j].set_speed(0, 0);
         }
 
@@ -673,7 +673,7 @@ void createMap() {
         // cout << "Fireline added" << flt << endl;
     }
     if (value > 469 && value < 569 && ( !boomcreated || (boomcreated && boomerang.counter < -100) )) {
-        boomerang = Boomerang(i, 15, COLOR_BLUE, 160);
+        boomerang = Boomerang(i, 15, SHADE_ORANGE, 160);
         boomerang.set_speed(0, 0);
         boomcreated = true;
         // cout << "boomerang added" << endl;
@@ -681,10 +681,10 @@ void createMap() {
 
     if (value > 790 && value < 840 && ((beamcreated && beam[0][0].position.y > 100) || !beamcreated) )  {
         for (int j = 0; j < 100; j++) {
-            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -2, COLOR_RED, 100, 5);
+            beam[0][j] = Parallax(player1.position.x + 6 + 0.2*j, -2, SHADE_RED, 100, 5);
         }
         for (int j = 0; j < 100; j++) {
-            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 10, COLOR_RED, 100, 5);
+            beam[1][j] = Parallax(player1.position.x + 6 + 0.2*j, 10, SHADE_RED, 100, 5);
         }
         beamcreated = true;
         // cout << "Fire beam on" << endl;
@@ -718,8 +718,8 @@ void createMap() {
 int main(int argc, char **argv) {
     // cout << "starting" << endl;
     srand(time(0));
-    int width  = 750;
-    int height = 750;
+    int width  = 700;
+    int height = 700;
     int c = 0;
     string base = "Score: ";
     window = initGLFW(width, height);
