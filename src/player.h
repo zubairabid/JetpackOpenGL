@@ -10,6 +10,8 @@ public:
     glm::vec3 position;
     void draw(glm::mat4 VP);
     void tick();
+    void draw_flame(glm::mat4 VP);
+    void draw_flame2(glm::mat4 VP);
     double dsp;
     double speed_x;
     double speed_y;
@@ -21,6 +23,8 @@ public:
     double score;
 private:
     VAO *object;
+    VAO *flame;
+    VAO *flame2;
 };
 
 #endif

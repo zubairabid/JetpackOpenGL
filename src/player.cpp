@@ -45,12 +45,51 @@ Player::Player(float x, float y, color_t color) {
         1.0f,-1.0f, 1.0f
     };
 
+    static const GLfloat triangle_vertex_buffer[] = {
+        1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, -1.0f,
+        0.0f, -2.0f, 0.0f,
+        1.0f, -1.0f, 1.0f,
+        -1.0f, -1.0f, 1.0f,
+        0.0f, -2.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        0.0f, -2.0f, 0.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f, 1.0f,
+        0.0f, -2.0f, 0.0f
+    };
+
+    static const GLfloat triangle2_vertex_buffer[] = {
+        1.0f, 1.0f, -1.0f,
+        1.0f, 1.0f, 1.0f,
+        2.0f, 0.0f, 0.0f,
+        1.0f, 1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        2.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        2.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, -1.0f,
+        2.0f, 0.0f, 0.0f        
+    };
+
+    // static const GLfloat shield_vertex_buffer[] = {
+    //     2.0f, 2.0f, 2.0f,
+    //     -2.0f, 2.0f, 2.0f,
+    // }
+    
+
     this->bounds.x = x;
     this->bounds.y = y;
     this->bounds.width = 2.0f;
     this->bounds.height = 2.0f;
     //  = {x, y, 1.0f, 1.0f};
     this->object = create3DObject(GL_TRIANGLES, 12*3, vertex_buffer_data, color, GL_FILL);
+    this->flame = create3DObject(GL_TRIANGLES, 4*3, triangle_vertex_buffer, COLOR_RED, GL_FILL);
+    this->flame2 = create3DObject(GL_TRIANGLES, 4*3, triangle2_vertex_buffer, COLOR_BLUE, GL_FILL);
+    
 }
 
 void Player::draw(glm::mat4 VP) {
@@ -60,7 +99,29 @@ void Player::draw(glm::mat4 VP) {
     glm::mat4 MVP = VP * Matrices.model;
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
     draw3DObject(this->object);
+    // draw3DObject(this->flame);
+    // draw3DObject(this->flame2);
+    
 }
+
+void Player::draw_flame(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate (this->position);    // glTranslatef
+    Matrices.model *= translate;
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->flame);
+}
+
+void Player::draw_flame2(glm::mat4 VP) {
+    Matrices.model = glm::mat4(1.0f);
+    glm::mat4 translate = glm::translate (this->position);    // glTranslatef
+    Matrices.model *= translate;
+    glm::mat4 MVP = VP * Matrices.model;
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    draw3DObject(this->flame2);
+}
+
 
 void Player::set_speed(double speed_x, double speed_y) {
     this->speed_x = speed_x;

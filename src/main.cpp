@@ -184,6 +184,12 @@ void draw() {
 
     // 5
     player1.draw(VP);
+    if (player1.speed_y > 0) {
+        player1.draw_flame(VP);
+    }
+    if (limit == 1) {
+        player1.draw_flame2(VP);
+    }
 }
 
 void tick_input(GLFWwindow *window) {
