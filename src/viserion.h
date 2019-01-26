@@ -20,7 +20,9 @@ public:
     bounding_box_t bounds;
     double timing;
 private:
-    VAO *object;
+    VAO *head;
+    VAO *body;
+    VAO *wing;
 };
 
 #endif
