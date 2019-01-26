@@ -273,7 +273,8 @@ void tick_elements() {
                 player1.drag_x = 0;
                 player1.drag_y = 0;
                 player1.speed_x = 0;
-                player1.speed_y = 0;
+                // if (j < 16)
+                player1.speed_y = 0.08*((16-j)/16.0);
             }
             // else {
             //     disablejump = false;
@@ -290,7 +291,7 @@ void tick_elements() {
             for (int j = 0; j < 30; j++) {
                 if (detect_collision(player1.bounds, line[i][j].bounds)) {
                     cout << "DIE DIE DIE" << endl;
-                    player1.set_position(-100000, 0);
+                    player1.set_position(0, -100000);
                 }
             }
         }
@@ -301,7 +302,7 @@ void tick_elements() {
                 for (int j = 0; j < 100; j++) {
                     if (detect_collision(player1.bounds, beam[i][j].bounds)) {
                         cout << "DIE DIE DIE" << endl;
-                        player1.set_position(-100000, 0);
+                        player1.set_position(0, -100000);
                     }
                 }
             } 
@@ -311,7 +312,7 @@ void tick_elements() {
         if (boomcreated) {
             if (detect_collision(player1.bounds, boomerang.bounds)) {
                 cout << "DIE DIE DIE" << endl;
-                player1.set_position(-100000, 0);
+                player1.set_position(0, -100000);
             }
         }
 
@@ -319,7 +320,7 @@ void tick_elements() {
         if (icem) {
             if (detect_collision(player1.bounds, ice.bounds)) {
                 cout << "DIE DIE DIE" << endl;
-                player1.set_position(-100000, 0);
+                player1.set_position(0, -100000);
             }
         }
     }
@@ -635,10 +636,15 @@ void createMap() {
         cout << "Coin3 added" << c3t << endl;
     }
 
-    if (value > 9999 && value < 10099) {
+    if (value > 9999 && value < 10049) {
         int height = rand() % 20 - 10;
+        double add = 0;
         for (int j = 0; j < 32; j++) {
-            semi[scs][j] = Semi(i+j*0.6, height, COLOR_BLACK);
+            if (j < 16)
+                add += (0.6*((16-j)/16.0));
+            else
+                add -= (0.6*((j-16)/16.0));
+            semi[scs][j] = Semi(i+j*0.6, height+add, COLOR_BLACK);
             semi[scs][j].set_speed(0, 0);
         }
 

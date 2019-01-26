@@ -18,7 +18,6 @@ public:
     void set_speed_y(double speed_y);
     void set_position(float x, float y);
     bounding_box_t bounds;
-    double timing;
 private:
     VAO *object;
 };
