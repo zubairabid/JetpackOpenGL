@@ -435,10 +435,16 @@ void tick_elements() {
         int x_off = magnet.position.x - player1.position.x;
         int y_off = magnet.position.y - player1.position.y;
 
-        player1.set_speed(player1.speed_x - x_off/10, player1.speed_y+y_off/10);
+        player1.drag_x = x_off/15;
+        player1.drag_y = y_off/15;
+        // player1.set_speed(player1.speed_x - x_off/10, player1.speed_y+y_off/10);
         // player1.position.x += x_off/40;
         // player1.position.y -= y_off/40;
         // player1.tick();
+    }
+    else {
+        player1.drag_x = 0;
+        player1.drag_y = 0;
     }
 
     magnet.tick();
@@ -549,7 +555,7 @@ void createMap() {
     int value = rand() % 20000;
     int i = (int)player_location + 35;
     
-    if (value >= 10 && value <= 15 && magnet.timing == 0) {
+    if (value >= 10 && value <= 1000 && magnet.timing == 0) {
         magnet.timing = 300;
     }
 

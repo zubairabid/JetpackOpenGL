@@ -4,6 +4,8 @@
 Player::Player(float x, float y, color_t color) {
     this->position = glm::vec3(x, y, 0);
     this->score = 0;
+    this->drag_x = 0;
+    this->drag_y = 0;
     // Our vertices. Three consecutive floats give a 3D vertex; Three consecutive vertices give a triangle.
     // A cube has 6 faces with 2 triangles each, so this makes 6*2=12 triangles, and 12*3 vertices
     static const GLfloat vertex_buffer_data[] = {
@@ -143,6 +145,8 @@ void Player::set_position(float x, float y) {
 }
 
 void Player::tick() {
+    this->position.x += drag_x;
+    this->position.y += drag_y;
     // this->rotation += speed;
     this->position.x -= speed_x;
     this->position.y += speed_y;

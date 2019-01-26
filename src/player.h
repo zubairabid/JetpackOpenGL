@@ -15,6 +15,8 @@ public:
     double dsp;
     double speed_x;
     double speed_y;
+    double drag_x;
+    double drag_y;
     void set_speed(double speed_x, double speed_y);
     void set_speed_x(double speed_x);
     void set_speed_y(double speed_y);
