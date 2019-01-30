@@ -1,7 +1,19 @@
-Graphics Boilerplate Code
-=========================
+A jetpack joyride inspired game using OpenGL 3
 
-This is boilerplate code for the assignments which might be helpful.
+## Running
+This comes with a preinstalled binary. Navigate to `./output` and run `./graphics_asgn1`
+
+## Playing
+Right and Left arrows to move right/left across the screen
+
+Spacebar to Jump
+
+Up arrow to shoot
+
+## Implemented
+Basic: all
+
+Bonus: Dragon, Shield/sword
 
 
 License

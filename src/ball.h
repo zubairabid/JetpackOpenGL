@@ -14,6 +14,8 @@ public:
     void set_position(float x, float y);
     void tick();
     double speed;
+    void set_speed(double speed);
+    bounding_box_t bounds;
 private:
     VAO *object;
 };
